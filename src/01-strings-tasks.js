@@ -153,7 +153,7 @@ function unbracketTag(str) {
  *  'abcdefghijklmnopqrstuvwxyz' => 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
  */
 function convertToUpperCase(str) {
-  return str.toUpperCase;
+  return str.toUpperCase();
 }
 
 /**
@@ -199,7 +199,15 @@ function extractEmails(str) {
  *
  */
 function getRectangleString(width, height) {
-  throw new Error('Not implemented');
+  if (width <= 0 || height <= 0) {
+    throw new Error('Width and height must be greater than 0');
+  }
+
+  const horizontalBorder = `┌${'─'.repeat(width - 2)}┐\n`;
+  const middle = `│${' '.repeat(width - 2)}│\n`.repeat(height - 2);
+  const verticalBorder = `└${'─'.repeat(width - 2)}┘\n`;
+
+  return `${horizontalBorder}${middle}${verticalBorder}`;
 }
 
 /**
@@ -218,12 +226,12 @@ function getRectangleString(width, height) {
  *    => 'NOPQRSTUVWXYZABCDEFGHIJKLMnopqrstuvwxyzabcdefghijklm'
  *
  */
+
 function encodeToRot13(str) {
   return str.replace(/[A-Za-z]/g, (char) => {
-    let baseCharCode = char < 'a' ? 'A'.charCodeAt(0) : 'a'.charCodeAt(0);
-    return String.fromCharCode(
-      ((char.charCodeAt(0) - baseCharCode + 13) % 26) + baseCharCode
-    );
+    const baseCharCode = char < 'a' ? 'A'.charCodeAt(0) : 'a'.charCodeAt(0);
+    const rotatedCharCode = ((char.charCodeAt(0) - baseCharCode + 13) % 26) + baseCharCode;
+    return String.fromCharCode(rotatedCharCode);
   });
 }
 
@@ -241,10 +249,8 @@ function encodeToRot13(str) {
  *   isString(new String('test')) => true
  */
 function isString(value) {
-  return typeof value === 'string';
+  return typeof value === 'string' || value instanceof String;
 }
-
-
 
 /**
  * Returns playid card id.
@@ -270,8 +276,32 @@ function isString(value) {
  *   'Q♠' => 50
  *   'K♠' => 51
  */
-function getCardId(/* value */) {
-  throw new Error('Not implemented');
+function getCardId(value) {
+  const suits = ['♣', '♦', '♥', '♠'];
+  const ranks = [
+    'A',
+    '2',
+    '3',
+    '4',
+    '5',
+    '6',
+    '7',
+    '8',
+    '9',
+    '10',
+    'J',
+    'Q',
+    'K',
+  ];
+
+  const suitIndex = suits.indexOf(value.charAt(value.length - 1));
+  const rankIndex = ranks.indexOf(value.slice(0, -1));
+
+  if (suitIndex === -1 || rankIndex === -1) {
+    throw new Error('Invalid card value');
+  }
+
+  return suitIndex * ranks.length + rankIndex;
 }
 
 module.exports = {
